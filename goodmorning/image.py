@@ -4,7 +4,7 @@ from base64 import b64encode
 from tempfile import gettempdir
 import shutil
 import os
-from os.path import join, abspath, dirname
+from os.path import join, abspath, dirname, isdir
 
 from nider.core import Font, Outline
 from nider.models import Header, Content, Linkback, Paragraph, Image
@@ -15,6 +15,9 @@ from goodmorning.pixabay import get_random_pic
 
 PROJ_DIR = dirname(abspath(__file__))
 TEMPDIR = gettempdir()
+OUTPUT_DIR = join(TEMPDIR, 'shared')
+if not isdir(OUTPUT_DIR):
+    os.mkdir(OUTPUT_DIR)
 
 
 def generate(text, font_path):
@@ -56,7 +59,7 @@ def generate(text, font_path):
 
     content = Content(header=header, paragraph=para, linkback=linkback)
 
-    output_path = join(TEMPDIR, 'good-morning.jpg')
+    output_path = join(OUTPUT_DIR, 'good-morning.jpg')
     img = Image(content,
                 fullpath=output_path,
                 width=500,
