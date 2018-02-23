@@ -72,4 +72,6 @@ def generate(text, font_path):
     logger.debug('deleting source image: %s' % filepath)
     os.remove(filepath)
 
+    logger.debug('chmod output file to 777')
+    os.chmod(output_path, 0o777)
     return output_path
