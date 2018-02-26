@@ -5,6 +5,7 @@ from tempfile import gettempdir
 import shutil
 import os
 from os.path import join, abspath, dirname, isdir
+import random
 
 from nider.core import Font, Outline
 from nider.models import Header, Content, Linkback, Paragraph, Image
@@ -18,6 +19,12 @@ TEMPDIR = gettempdir()
 OUTPUT_DIR = join(TEMPDIR, 'shared')
 if not isdir(OUTPUT_DIR):
     os.mkdir(OUTPUT_DIR)
+
+
+def _random_quotes():
+    with open(join(PROJ_DIR, 'data', 'quotes.txt')) as f:
+        sent = random.choice(f.readlines()).strip('\n')
+        return ' '.join(list(sent))
 
 
 def generate(text, font_path):
@@ -35,7 +42,7 @@ def generate(text, font_path):
     logger.debug('generating good-morning picture')
     text_outline = Outline(2, '#FFFFFF')
 
-    header = Header(text='%s 祝：' % text,
+    header = Header(text=text,
                     font=Font(font_path, 40),
                     text_width=30,
                     align='left',
@@ -43,9 +50,9 @@ def generate(text, font_path):
                     outline=text_outline,
                     )
 
-    para = Paragraph(text='身體健康，萬事順心',
-                     font=Font(font_path, 45),
-                     text_width=30,
+    para = Paragraph(text=_random_quotes(),
+                     font=Font(font_path, 25),
+                     text_width=35,
                      align='center',
                      color='#FF0000',
                      outline=text_outline,
