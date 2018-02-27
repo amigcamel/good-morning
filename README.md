@@ -10,8 +10,8 @@ https://github.com/adobe-fonts/source-han-sans/raw/release/OTF/TraditionalChines
 
 # Usage
 
-    from goodmorning.image import generate
-    generate('爹，娘， ', font_path='/your/font/path/SourceHanSansTC-Medium.otf')
+    import goodmorning
+    goodmorning.generate('爹娘早安！', font='SourceHanSansTC-Medium.otf', header_template=False)
     
 This will return the path of the generated image:
 
