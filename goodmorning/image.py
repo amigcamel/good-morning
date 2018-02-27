@@ -33,21 +33,37 @@ def _random_quotes():
     return output, 40
 
 
-def generate(text, font, header_template=False):
-    """Generate good-morning picture."""
+def generate(text, font, header_template=False, img_path=None):
+    """Generate good-morning picture.
+
+    Args:
+    - text: Header text.
+    - font: Font name.
+    - header_template: If set true, '週x好' will be append to the header.
+    - img_path: Image path. If not provide, random picture will be downloaded
+                via "pixabay" API. (`pixabay_api` must be set in the system
+                environment variables).
+
+    Usage:
+        generate('爹娘早安！', font='SourceHanSansTC-Medium.otf',
+                               header_template=True,
+                               img_path=None)
+    """
     font_path = join(FONT_PATH, font)
     if not isfile(font_path):
         raise FileNotFoundError(font_path)
     logger.debug('download random picture')
     pic_url = get_random_pic()
-    filepath = join(
-        TEMP_PATH, b64encode(pic_url.encode('utf-8')).decode('utf-8'))
-    logger.debug('downloading pic from %s' % pic_url)
-    resp = requests.get(pic_url, stream=True)
-    logger.debug('writing img to disk: %s' % filepath)
-    with open(filepath, 'wb') as f:
-        shutil.copyfileobj(resp.raw, f)
-
+    if img_path:
+        filepath = img_path
+    else:
+        filepath = join(
+            TEMP_PATH, b64encode(pic_url.encode('utf-8')).decode('utf-8'))
+        logger.debug('downloading pic from %s' % pic_url)
+        resp = requests.get(pic_url, stream=True)
+        logger.debug('writing img to disk: %s' % filepath)
+        with open(filepath, 'wb') as f:
+            shutil.copyfileobj(resp.raw, f)
     logger.debug('generating good-morning picture')
     text_outline = Outline(2, '#FFFFFF')
 
@@ -88,8 +104,9 @@ def generate(text, font, header_template=False):
     logger.debug('drawing')
     img.draw_on_image(filepath)
 
-    logger.debug('deleting source image: %s' % filepath)
-    os.remove(filepath)
+    if not img_path:
+        logger.debug('deleting source image: %s' % filepath)
+        os.remove(filepath)
 
     logger.debug('chmod output file to 777')
     os.chmod(output_path, 0o777)
