@@ -20,6 +20,9 @@ OUTPUT_DIR = join(TEMPDIR, 'shared')
 if not isdir(OUTPUT_DIR):
     os.mkdir(OUTPUT_DIR)
 
+weekday_trans = {
+    0: '一', 1: '二', 2: '三', 3: '四', 4: '五', 5: '六', 6: '日'}
+
 
 def _random_quotes():
     with open(join(PROJ_DIR, 'data', 'quotes.txt')) as f:
@@ -35,7 +38,7 @@ def _random_quotes():
     return output, 40
 
 
-def generate(text, font_path):
+def generate(text, font_path, header_template=False):
     """Generate good-morning picture."""
     logger.debug('download random picture')
     pic_url = get_random_pic()
@@ -50,6 +53,9 @@ def generate(text, font_path):
     logger.debug('generating good-morning picture')
     text_outline = Outline(2, '#FFFFFF')
 
+    if header_template:
+        template = '週%s好！' % weekday_trans[datetime.now().weekday()]
+        text += ' ' + template
     header = Header(text=text,
                     font=Font(font_path, 40),
                     text_width=30,
