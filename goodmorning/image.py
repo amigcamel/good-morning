@@ -24,7 +24,15 @@ if not isdir(OUTPUT_DIR):
 def _random_quotes():
     with open(join(PROJ_DIR, 'data', 'quotes.txt')) as f:
         sent = random.choice(f.readlines()).strip('\n')
-        return ' '.join(list(sent))
+    # add white space between each characters to make it break lines
+    output = ' '.join(list(sent))
+    if len(sent) < 9:
+        font_size = 38
+    elif len(sent) >= 9:
+        font_size = 38 - (len(sent) - 9)
+    if font_size < 20:
+        font_size = 20
+    return output, 40
 
 
 def generate(text, font_path):
@@ -49,10 +57,10 @@ def generate(text, font_path):
                     color='#FF0000',
                     outline=text_outline,
                     )
-
-    para = Paragraph(text=_random_quotes(),
-                     font=Font(font_path, 25),
-                     text_width=35,
+    quote, font_size = _random_quotes()
+    para = Paragraph(text=quote,
+                     font=Font(font_path, font_size),
+                     text_width=15,
                      align='center',
                      color='#FF0000',
                      outline=text_outline,
