@@ -33,11 +33,12 @@ def _random_quotes():
     return output, 40
 
 
-def generate(text, font, header_template=False, img_path=None):
+def generate(text, author, font, header_template=False, img_path=None):
     """Generate good-morning picture.
 
     Args:
     - text: Header text.
+    - author: author name.
     - font: Font name.
     - header_template: If set true, '週x好' will be append to the header.
     - img_path: Image path. If not provide, random picture will be downloaded
@@ -86,7 +87,7 @@ def generate(text, font, header_template=False, img_path=None):
                      outline=text_outline,
                      )
 
-    linkback = Linkback(text=('阿吉 %s' % str(datetime.now().date())),
+    linkback = Linkback(text=('%s %s' % (author, str(datetime.now().date()))),
                         font=Font(font_path, 20),
                         color='#FFFFFF',
                         # outline=text_outline,
