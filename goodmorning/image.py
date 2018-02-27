@@ -12,7 +12,7 @@ import requests
 from ajilog import logger
 
 from .pixabay import get_random_pic
-from .conf import PROJ_DIR, TEMP_PATH, FONT_DIR, OUTPUT_DIR
+from .conf import TEMP_PATH, FONT_DIR, OUTPUT_DIR, QUOTE_PATH
 
 
 weekday_trans = {
@@ -20,7 +20,7 @@ weekday_trans = {
 
 
 def _gen_quotes():
-    with open(join(PROJ_DIR, 'data', 'quotes.txt')) as f:
+    with open(QUOTE_PATH) as f:
         return random.choice(f.readlines()).strip('\n')
 
 

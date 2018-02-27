@@ -10,3 +10,4 @@ if not isdir(OUTPUT_DIR):
     os.mkdir(OUTPUT_DIR)
 
 FONT_DIR = 'fonts'
+QUOTE_PATH = join(PROJ_DIR, 'data', 'quotes.txt')
