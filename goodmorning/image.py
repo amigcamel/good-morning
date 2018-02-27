@@ -12,7 +12,7 @@ import requests
 from ajilog import logger
 
 from .pixabay import get_random_pic
-from .conf import PROJ_PATH, TEMP_PATH, FONT_PATH, OUTPUT_PATH
+from .conf import PROJ_DIR, TEMP_PATH, FONT_DIR, OUTPUT_DIR
 
 
 weekday_trans = {
@@ -20,7 +20,7 @@ weekday_trans = {
 
 
 def _random_quotes():
-    with open(join(PROJ_PATH, 'data', 'quotes.txt')) as f:
+    with open(join(PROJ_DIR, 'data', 'quotes.txt')) as f:
         sent = random.choice(f.readlines()).strip('\n')
     # add white space between each characters to make it break lines
     output = ' '.join(list(sent))
@@ -49,7 +49,7 @@ def generate(text, font, header_template=False, img_path=None):
                                header_template=True,
                                img_path=None)
     """
-    font_path = join(FONT_PATH, font)
+    font_path = join(FONT_DIR, font)
     if not isfile(font_path):
         raise FileNotFoundError(font_path)
     logger.debug('download random picture')
@@ -94,7 +94,7 @@ def generate(text, font, header_template=False, img_path=None):
 
     content = Content(header=header, paragraph=para, linkback=linkback)
 
-    output_path = join(OUTPUT_PATH, 'good-morning.jpg')
+    output_path = join(OUTPUT_DIR, 'good-morning.jpg')
     img = Image(content,
                 fullpath=output_path,
                 width=500,
