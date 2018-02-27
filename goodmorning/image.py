@@ -1,10 +1,9 @@
 """Handle image."""
 from datetime import datetime
 from base64 import b64encode
-from tempfile import gettempdir
 import shutil
 import os
-from os.path import join, abspath, dirname, isdir
+from os.path import join, isfile
 import random
 
 from nider.core import Font, Outline
@@ -12,20 +11,16 @@ from nider.models import Header, Content, Linkback, Paragraph, Image
 import requests
 from ajilog import logger
 
-from goodmorning.pixabay import get_random_pic
+from .pixabay import get_random_pic
+from .conf import PROJ_PATH, TEMP_PATH, FONT_PATH, OUTPUT_PATH
 
-PROJ_DIR = dirname(abspath(__file__))
-TEMPDIR = gettempdir()
-OUTPUT_DIR = join(TEMPDIR, 'shared')
-if not isdir(OUTPUT_DIR):
-    os.mkdir(OUTPUT_DIR)
 
 weekday_trans = {
     0: '一', 1: '二', 2: '三', 3: '四', 4: '五', 5: '六', 6: '日'}
 
 
 def _random_quotes():
-    with open(join(PROJ_DIR, 'data', 'quotes.txt')) as f:
+    with open(join(PROJ_PATH, 'data', 'quotes.txt')) as f:
         sent = random.choice(f.readlines()).strip('\n')
     # add white space between each characters to make it break lines
     output = ' '.join(list(sent))
@@ -38,12 +33,15 @@ def _random_quotes():
     return output, 40
 
 
-def generate(text, font_path, header_template=False):
+def generate(text, font, header_template=False):
     """Generate good-morning picture."""
+    font_path = join(FONT_PATH, font)
+    if not isfile(font_path):
+        raise FileNotFoundError(font_path)
     logger.debug('download random picture')
     pic_url = get_random_pic()
     filepath = join(
-        TEMPDIR, b64encode(pic_url.encode('utf-8')).decode('utf-8'))
+        TEMP_PATH, b64encode(pic_url.encode('utf-8')).decode('utf-8'))
     logger.debug('downloading pic from %s' % pic_url)
     resp = requests.get(pic_url, stream=True)
     logger.debug('writing img to disk: %s' % filepath)
@@ -80,7 +78,7 @@ def generate(text, font_path, header_template=False):
 
     content = Content(header=header, paragraph=para, linkback=linkback)
 
-    output_path = join(OUTPUT_DIR, 'good-morning.jpg')
+    output_path = join(OUTPUT_PATH, 'good-morning.jpg')
     img = Image(content,
                 fullpath=output_path,
                 width=500,
