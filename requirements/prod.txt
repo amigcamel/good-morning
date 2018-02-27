@@ -1,0 +1,4 @@
+ajilog==0.0.3
+nider==0.4.1
+requests==2.18.4
+
