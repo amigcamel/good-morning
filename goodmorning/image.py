@@ -19,36 +19,46 @@ weekday_trans = {
     0: '一', 1: '二', 2: '三', 3: '四', 4: '五', 5: '六', 6: '日'}
 
 
-def _random_quotes():
+def _gen_quotes():
     with open(join(PROJ_DIR, 'data', 'quotes.txt')) as f:
-        sent = random.choice(f.readlines()).strip('\n')
-    # add white space between each characters to make it break lines
-    output = ' '.join(list(sent))
-    if len(sent) < 9:
+        return random.choice(f.readlines()).strip('\n')
+
+
+def _calc_font_size(text):
+    if len(text) < 9:
         font_size = 38
-    elif len(sent) >= 9:
-        font_size = 38 - (len(sent) - 9)
+    elif len(text) >= 9:
+        font_size = 38 - (len(text) - 9)
     if font_size < 20:
         font_size = 20
-    return output, 40
+    return font_size
 
 
-def generate(text, author, font, header_template=False, img_path=None):
+def generate(font,
+             title='',
+             content='',
+             author='',
+             header_template=True,
+             img_path=None):
     """Generate good-morning picture.
 
     Args:
-    - text: Header text.
-    - author: author name.
     - font: Font name.
+    - title: title text.
+    - content: content text.
+    - author: author name.
     - header_template: If set true, '週x好' will be append to the header.
     - img_path: Image path. If not provide, random picture will be downloaded
                 via "pixabay" API. (`pixabay_api` must be set in the system
                 environment variables).
 
     Usage:
-        generate('爹娘早安！', font='SourceHanSansTC-Medium.otf',
-                               header_template=True,
-                               img_path=None)
+        # completely generate random good-morning picture
+        generate(font='SourceHanSansTC-Medium.otf')
+        # with custom settings
+        generate(font='SourceHanSansTC-Medium.otf',
+                 title='爹娘早安！',
+                 author='阿吉')
     """
     font_path = join(FONT_DIR, font)
     if not isfile(font_path):
@@ -70,16 +80,21 @@ def generate(text, author, font, header_template=False, img_path=None):
 
     if header_template:
         template = '週%s好！' % weekday_trans[datetime.now().weekday()]
-        text += ' ' + template
-    header = Header(text=text,
+        title += ' ' + template
+    header = Header(text=title,
                     font=Font(font_path, 40),
                     text_width=30,
                     align='left',
                     color='#FF0000',
                     outline=text_outline,
                     )
-    quote, font_size = _random_quotes()
-    para = Paragraph(text=quote,
+    if not content:
+        content = _gen_quotes()
+    font_size = _calc_font_size(content)
+    # add white space between each characters to make it break lines
+    content = ' '.join(list(content))
+    logger.debug('content: ' + content)
+    para = Paragraph(text=content,
                      font=Font(font_path, font_size),
                      text_width=15,
                      align='center',
